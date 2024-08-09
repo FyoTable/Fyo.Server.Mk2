@@ -1,0 +1,102 @@
+import Client from '../handlers/client';
+import EventListener from '../utils/eventListener';
+import { SGUpdateMsg } from './Messages';
+
+export default class GamePadClient extends EventListener {
+
+    client: Client;
+    id: number = -1;
+    primary: boolean = false;
+    controller: string = 'base_controller';
+    timingOut: boolean = false;
+    reconnectTimer: any;
+    info: any = { };
+
+    constructor(client: Client, id: number) {
+        super();
+
+        this.id = id;
+
+        this.client = client;
+    }
+
+    Init() {
+        this.client.on('SGUpdateMsg', this.SGUpdateMsg.bind(this));
+        this.client.on('SGTimingOutMsg', () => { });
+        this.client.on('SGDisconnectMsg', () => { });
+        this.client.on('SGReconnectMsg', () => { });
+        this.client.on('disconnect', this.disconnect.bind(this));
+        this.client.send('SGHandshakeMsg');
+    }
+
+    SGUpdateMsg(data: SGUpdateMsg) {
+        data.SGID = this.id;
+        data.DeviceId = this.client.deviceId!;
+        this.emit('SGUpdateMsg', data);
+    }
+
+    SetPrimary() {
+        this.primary = true;
+        this.client.send('SGUpdateMsg', {
+            message: 'Primary',
+            data: this.primary
+        });
+        this.UpdateAdminInfo
+    }
+
+    UpdateAdminInfo() {
+        this.client.sendToAdmin('SGHandshakeIdentMsg', {
+            DeviceId: this.client.deviceId,
+            SGID: this.id,
+            Primary: this.primary,
+            Controller: this.controller,
+            Info: this.info,
+            TimingOut: this.timingOut
+        });
+    }
+
+    Redirect(controller: string) {
+        this.controller = controller;
+        this.client.send('SGUpdateMsg', {
+            message: 'Redirect',
+            data: this.controller
+        });
+        this.UpdateAdminInfo();
+    }
+
+    private disconnect() {
+        if (this.client.forcedDisconnect) return;
+
+        console.log('setting up reconnect timer');
+        this.reconnectTimer = setTimeout(() => {
+
+            // Full disconnect
+            console.log('Reconnect timed out - full disconnect');
+            
+            this.emit('SGDisconnectMsg', {
+                SGID: this.id,
+                DeviceId: this.client.deviceId
+            });
+
+            this.client.send('SGDisconnectMsg', {
+                SGID: this.id,
+                DeviceId: this.client.deviceId
+            });
+
+            this.client.sendToAdmin('SGDisconnectMsg', {
+                SGID: this.id,
+                DeviceId: this.client.deviceId
+            });
+
+            // After 15 seconds full drop
+        }, 15000);
+
+        this.timingOut = true;
+        this.emit('SGTimingOutMsg', {
+            SGID: this.id,
+            DeviceId: this.client.deviceId
+        });
+        this.UpdateAdminInfo();
+    }
+
+}

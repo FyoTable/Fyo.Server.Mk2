@@ -1,0 +1,235 @@
+﻿<!DOCTYPE html>
+<html lang="en" style="height: 100%">
+    <head>
+        <title>Fyo Game Table - Base Controller</title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+
+        <!-- Base Fyo css -->
+        <link rel="stylesheet" href="/fyogametable/dist/fyo.css">
+        <!-- Specific to this controller -->
+        <link rel="stylesheet" href="/bootstrap/dist/css/bootstrap.min.css">
+        <link rel="stylesheet" href="base_styles.css">
+    </head>
+    <body>
+        <div id="mainContainer">
+            <div class="row" style="height: 100%">
+                <div class="col-xs-6" style="height: 100%">
+                    <div id="HyperLogo">
+                        <img src="Logo.png" />
+                    </div>
+                    <div id="DPad">
+                        <img id="dpadImg" src="/DPad.png" class="noselect" />
+                    </div>
+                </div>
+                <div class="col-xs-6" style="height: 100%">
+                    <div id="buttons-right">
+                        <div id="system-buttons">
+                            <div id="ButtonStart">
+                                <span class="noselect">START</span>
+                            </div>
+                            <div id="ButtonInfo">
+                                <img src="/Target.png" class="noselect" />
+                            </div>
+                        </div>
+                        <div id="large-buttons-container">
+                            <div id="large-buttons">
+                                <div id="top-button">
+                                    <div class="side-left">
+                                    </div>
+                                    <div class="side-right" id="ButtonB">
+                                        <img id="bombImg" class="noselect" src="/Bomb.png" />
+                                    </div>
+                                </div>
+                                <div id="bottom-button">
+                                    <div class="side-left">
+                                    </div>
+                                    <div class="side-right" id="ButtonA">
+                                        <img id="missileImg" class="noselect" src="/Missile.png" />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="landscape" id="landscape">
+            <img src="logo.png" style="width: 100px; margin: 20px;" />
+            <h1>To start, rotate your phone to landscape.</h1>
+        </div>
+
+
+        <!-- Socket.io is required for FyoGameTable -->
+        <script src="/socket.io/socket.io.js"></script>
+
+        <!-- Three.js is only required if using FyoGameTable.Controls.3D -->
+        <script src="/threejs/build/three.min.js"></script>
+        <script src="/threejs/examples/js/loaders/OBJLoader.js"></script>
+
+        <!-- Minified Fyo Scripts -->
+        <script src="/fyogametable/dist/fyo.js"></script>
+
+
+        <script>
+
+
+            //var p = new FYO.Picture(function (data) {
+            //    //console.log(data);
+            //    document.getElementById('profilePic').setAttribute('src', data);
+            //    document.getElementById('profilePic').setAttribute('style', '');
+            //});
+
+        </script>
+
+        <!-- Controller specific setup -->
+        <script>
+
+            function Prevent(event) {
+                event.preventDefault();
+                event.stopPropagation && event.stopPropagation();
+                event.cancelBubble = true;
+                event.returnValue = false;
+            }
+            document.getElementById('missileImg').addEventListener('touchend', Prevent);
+            document.getElementById('missileImg').addEventListener('touchstart', Prevent);
+            document.getElementById('missileImg').addEventListener('touchmove', Prevent);
+            document.getElementById('bombImg').addEventListener('touchend', Prevent);
+            document.getElementById('bombImg').addEventListener('touchstart', Prevent);
+            document.getElementById('bombImg').addEventListener('touchmove', Prevent);
+            document.getElementById('dpadImg').addEventListener('touchend', Prevent);
+            document.getElementById('dpadImg').addEventListener('touchstart', Prevent);
+            document.getElementById('dpadImg').addEventListener('touchmove', Prevent);
+
+            var playerId = 0;
+
+            var connecter = new FYO.FyoConnection('base_controller');
+            connecter.AddVisualLatency();
+            
+            function fill() {
+                connecter.socket.emit('ack');
+                setTimeout(fill, 10);
+            }
+            fill();
+
+            ////////////////////////////////
+            ///  MessageType Handlers
+            ////////////////////////////////
+
+            function GameStarted(data) {
+                playerId = data.PlayerId;
+                if (data.Master) {
+                    document.getElementById('text-message').innerText = 'MASTER ' + data.PlayerId;
+                } else {
+                    document.getElementById('text-message').innerText = 'PLAYER ' + data.PlayerId;
+                }
+            }
+
+            function MasterControl(data) {
+                document.getElementById('text-message').innerText = 'MASTER ' + playerId;
+            }
+
+            // Messages from the Node Server (which originated from the game)
+            connecter.on('SGUpdateMsg', function (data) {
+                switch (data.MessageType) {
+                    case 'GameStarted':
+                        GameStarted(data.data);
+                        break;
+                    case 'MasterControl':
+                        MasterControl(data.data);
+                        break;
+                }
+            });
+
+
+            var buttonA = new FYO.Button(connecter, {
+                id: 'ButtonA',
+                ondown: function () {
+                    connecter.SetButtonOn(FYO.BUTTON[1]);
+                },
+                onup: function () {
+                    connecter.SetButtonOff(FYO.BUTTON[1]);
+                }
+            });
+
+            var buttonB = new FYO.Button(connecter, {
+                id: 'ButtonB',
+                ondown: function () {
+                    connecter.SetButtonOn(FYO.BUTTON[0]);
+                },
+                onup: function () {
+                    connecter.SetButtonOff(FYO.BUTTON[0]);
+                }
+            });
+
+            var buttonStart = new FYO.Button(connecter, {
+                id: 'ButtonStart',
+                ondown: function () {
+                    connecter.SetButtonOn(FYO.BUTTON[2]);
+                },
+                onup: function () {
+                    connecter.SetButtonOff(FYO.BUTTON[2]);
+                }
+            });     
+
+            var buttonInfo = new FYO.Button(connecter, {
+                id: 'ButtonInfo',
+                ondown: function () {
+                    connecter.SetAxis(FYO.AXIS[2], 0, FYO.AXIS[3], -1);
+                },
+                onup: function () {
+                    connecter.SetAxis(FYO.AXIS[2], 0, FYO.AXIS[3], 0);
+                }
+            });
+            
+            var thumbstickLeftRenderer = new FYO.ThumbStick(connecter, {
+                id: 'DPad',
+                onmoved: function (data) {
+                    connecter.SetAxis(FYO.AXIS[0], data.x, FYO.AXIS[1], -data.y);
+                }
+            });
+
+            function startInternal() {
+                document.getElementById('landscape').setAttribute('style', 'display: none');
+            }
+
+            var start = function() {
+
+                if(!screen.orientation) {
+                    if(window.orientation == -90 || window.orientation == 90) {
+                        startInternal();
+                    }
+
+                    window.addEventListener('orientationchange', function(){
+                        console.log('Orientation change!');
+                        if(window.orientation == -90 || window.orientation == 90) {
+                            startInternal();
+                        } else {
+                            document.getElementById('landscape').setAttribute('style', '');
+                        }
+                    });
+                } else {
+                    
+                    if(screen.orientation.type.startsWith('landscape')) {
+                        startInternal();
+                    }
+                    
+                    screen.orientation.lock('landscape-primary').then( startInternal, function() {
+                        var orientationChangeHandler = function() {
+                        if (!screen.orientation.type.startsWith('landscape')) {
+                            document.getElementById('landscape').setAttribute('style', '');
+                            return;
+                        }
+                        screen.orientation.removeEventListener('change', orientationChangeHandler);
+                            startInternal();
+                        }
+
+                        screen.orientation.addEventListener('change', orientationChangeHandler);
+                    });
+                }
+            }
+            window.onload = start;
+        </script>
+
+    </body>
+</html>
