@@ -40,7 +40,9 @@ export default class WebServer {
         console.log(__dirname);
         this.app.use(express.static(__dirname + '/res'));
         this.app.use(express.static(__dirname + '/../build'));
+        this.app.use(express.static(__dirname + '/../../../fyowebbuild'));
         this.app.use(express.static(__dirname + '/../../../game_files'));
+        this.app.use(express.static(__dirname + '/../../../game_files/base_controller'));
     }
 
     routes() {

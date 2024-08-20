@@ -14,6 +14,7 @@
     "start": "electron-vite preview",
     "dev": "cross-env NODE_ENV=development electron-vite dev --watch",
     "build-fyo": "npx tsc --p src/fyo --outDir ./fyobuild",
+    "build-fyo-web": "npx webpack --config src/fyo-web/webpack.config.js",
     "compile:app": "electron-vite build",
     "compile:packageJSON": "node ./bin/modules/postbuild/index.js",
     "prebuild": "run-s compile:app compile:packageJSON",
@@ -30,6 +31,8 @@
     "cors": "^2.8.5",
     "electron-router-dom": "^1.0.5",
     "express": "^4.19.2",
+    "modernizr": "^3.13.1",
+    "platform": "^1.3.6",
     "qr-image": "^3.2.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
@@ -42,7 +45,9 @@
     "@commitlint/config-conventional": "^17.6.7",
     "@types/cors": "^2.8.17",
     "@types/express": "^4.17.21",
+    "@types/modernizr": "^3.5.6",
     "@types/node": "^20.4.5",
+    "@types/platform": "^1.3.6",
     "@types/react": "^18.2.18",
     "@types/react-dom": "^18.2.7",
     "@typescript-eslint/eslint-plugin": "^6.2.1",
@@ -65,9 +70,12 @@
     "rollup-plugin-inject-process-env": "^1.3.1",
     "sass": "^1.64.2",
     "semver": "^7.5.4",
-    "typescript": "^5.1.6",
+    "ts-loader": "^9.5.1",
+    "typescript": "^5.5.4",
     "vite": "^4.4.8",
-    "vite-tsconfig-paths": "^4.2.0"
+    "vite-tsconfig-paths": "^4.2.0",
+    "webpack": "^5.93.0",
+    "webpack-cli": "^5.1.4"
   },
   "lint-staged": {
     "*.{js,ts}": [
