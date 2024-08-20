@@ -2,7 +2,7 @@ import Client from "../handlers/client";
 import AdminClient from "./AdminClient";
 import ApplicationClient from "./ApplicationClient";
 import GamePadClient from "./GamePadClient";
-import { AppHandshakeMsg, SGRedirectMsg } from "./Messages";
+import { AppHandshakeMsg, SGRedirectMsg, SGUpdateMsg } from "./Messages";
 
 export default class FyoManager {
     gamePads: GamePadClient[] = [];
@@ -21,6 +21,7 @@ export default class FyoManager {
         const app = new ApplicationClient(client, data);
         app.on('AppEndMsg', this.AppEndMsg.bind(this));
         app.on('SGRedirectMsg', this.SGRedirectMsg.bind(this));
+        app.on('SGUpdateMsg', this.AppUpdateMsg.bind(this));
         this.activeApp = app;
         this.apps.push(app);
         this.gamePads.forEach(gamePad => { app.SGConnected(gamePad); });
@@ -73,6 +74,16 @@ export default class FyoManager {
         } else {
             console.error('Gamepad not found');
         }
+    }
+
+    AppUpdateMsg(data: { appId: string, data: SGUpdateMsg}) {
+        if (this.activeApp?.appId != data.appId) {
+            console.error('App ID mismatch:', data.appId, ' is not the active app');
+            return;
+        }
+        
+        // update all game pads
+        this.gamePads.forEach(gp => gp.SGUpdateMsg(data.data));
     }
 
     getNextSGID() {

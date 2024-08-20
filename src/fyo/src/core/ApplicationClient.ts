@@ -26,6 +26,7 @@ export default class ApplicationClient extends EventListener {
         // Messages from the Application
         this.appClient.on('AppEndMsg', this.AppEndMsg.bind(this));        
         this.appClient.on('SGRedirectMsg', this.SGRedirectMsg.bind(this));
+        this.appClient.on('SGUpdateMsg', this.SGUpdateMsg.bind(this));
 
         // Handle binary data
         this.HandleBinaryData(data);
@@ -52,7 +53,12 @@ export default class ApplicationClient extends EventListener {
 
     SGRedirectMsg(data: SGRedirectMsg) {
         // Tell the FyoManager that a gamepad should redirect to a different controller
-        this.emit('SGRedirectMsg', data);
+        this.emit('SGRedirectMsg', { appId: this.appId, data });
+    }
+
+    SGUpdateMsg(data: SGUpdateMsg) {
+        // Tell the FyoManager that there's a new update message from the game
+        this.emit('SGUpdateMsg', data);
     }
 
     Focused() {
