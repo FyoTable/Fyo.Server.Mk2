@@ -3,6 +3,9 @@ import EventListener from '../utils/eventListener';
 import colors from "colors";
 import GamePadClient from './GamePadClient';
 import { AppHandshakeMsg, SGRedirectMsg, SGUpdateMsg } from './Messages';
+import fs from 'fs';
+import path from 'path';
+import AdmZip from 'adm-zip';
 
 // This is the Application Client handler that communicates with the FyoManager
 export default class ApplicationClient extends EventListener {
@@ -25,8 +28,9 @@ export default class ApplicationClient extends EventListener {
         this.appClient.on('SGRedirectMsg', this.SGRedirectMsg.bind(this));
 
         // Handle binary data
+        this.HandleBinaryData(data);
         
-        // Tell the application that we've susccessfully connected
+        // Tell the game that we've susccessfully connected
         this.appClient.send('AppHandshakeMsg', {});
     }
 
@@ -60,5 +64,53 @@ export default class ApplicationClient extends EventListener {
         this.appClient.sendToAdmin('AppHandshakeMsg', {
             AppIDString: this.appId
         });
+    }
+
+    HandleBinaryData(data: any) {
+        const controller = data.Controller || this.appId;
+        console.log('Application Controller: ', controller);
+
+        if (data && data.BinaryData) {
+            // Receive Controller Payload
+            var buff = new Buffer(data.BinaryData, 'base64');
+
+            var rootPath = path.resolve(__dirname + '/../../../../../uploads/');
+            console.log('[Root Path] ', rootPath);
+            if(!fs.existsSync(rootPath)) {
+                fs.mkdirSync(rootPath);
+            }
+
+            var gameFilesPath = path.resolve(__dirname + '/../../../../game_files/');
+            console.log('[Game Files Path] ', gameFilesPath);
+            var fullpath = path.resolve(gameFilesPath);
+
+            fs.writeFile(fullpath, buff, "binary", (err) => {
+                if (err) {
+                    console.log(colors.red('[ERROR]'), err);
+                    return;
+                }
+
+                console.log(colors.green('[SUCCESS]'), 'written payload', fullpath);
+
+                var zip = new AdmZip(fullpath);
+                var p = path.resolve(__dirname + './../../../game_files/' + this.appId + '/');
+
+                console.log('[Extracting] ', p);
+
+                // make sure game_files path exists
+                if(!fs.existsSync(p)) {
+                    fs.mkdirSync(p);
+                }
+
+                console.log(p);
+                zip.extractAllTo(p, /*overwrite*/true);
+
+                // delete the zip file
+                fs.unlinkSync(fullpath);
+
+                // Tell all gamepads to go to the games root controller
+                this.emit('SGRedirectMsg', { controller });
+            });
+        }
     }
 }

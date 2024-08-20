@@ -25,6 +25,7 @@
     "prepare": "husky install"
   },
   "dependencies": {
+    "adm-zip": "^0.5.15",
     "colors": "^1.4.0",
     "cors": "^2.8.5",
     "electron-router-dom": "^1.0.5",

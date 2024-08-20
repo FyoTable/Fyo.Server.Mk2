@@ -43,8 +43,12 @@ export default class TCPClient extends Client {
             console.log('Message Block: ', received[0]);
 
             // Parse the message
-            var msg = JSON.parse(received[0]);
-            this.socket.emit(msg.event, msg.data);
+            try {
+                var msg = JSON.parse(received[0]);
+                this.socket.emit(msg.event, msg.data);
+            } catch (e) {
+                console.log('Error parsing message: ', e);
+            }
 
             this.buffer = received.slice(1).join('\n');
             received = this.buffer.split('\n');

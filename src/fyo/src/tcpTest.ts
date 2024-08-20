@@ -1,5 +1,7 @@
 import net from 'net';
 import EventListener from './utils/eventListener';
+import fs from 'fs';
+import path from 'path';
 
 class TCPTester extends EventListener{
     buffer: string = '';
@@ -48,7 +50,13 @@ class TCPTesterApp extends TCPTester {
         super();
 
         this.on('connected', () => {
-            this.sendMessage({ event: 'AppHandshakeMsg', data: { AppIDString: 'TCPTester' } });
+            const p = path.resolve(__dirname, '../', 'game_files', 'base_3D_controller.zip');
+            console.log(p, p.toString());
+
+            const binary = fs.readFileSync(p.toString());
+            const binaryData = binary.toString('base64');
+
+            this.sendMessage({ event: 'AppHandshakeMsg', data: { AppIDString: 'TCPTester', BinaryData: binaryData } });
         });
 
         this.socket.on('AppHandshakeMsg', () => {
