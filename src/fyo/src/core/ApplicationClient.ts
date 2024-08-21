@@ -27,12 +27,18 @@ export default class ApplicationClient extends EventListener {
         this.appClient.on('AppEndMsg', this.AppEndMsg.bind(this));        
         this.appClient.on('SGRedirectMsg', this.SGRedirectMsg.bind(this));
         this.appClient.on('SGUpdateMsg', this.SGUpdateMsg.bind(this));
+        this.appClient.on('disconnect', this.drop.bind(this));
 
         // Handle binary data
         this.HandleBinaryData(data);
         
         // Tell the game that we've susccessfully connected
         this.appClient.send('AppHandshakeMsg', {});
+    }
+
+    drop() {
+        this.ended = true;
+        this.emit('disconnected');
     }
 
     SGConnected(gamePad: GamePadClient) {
@@ -83,8 +89,11 @@ export default class ApplicationClient extends EventListener {
     }
 
     UpdateAdminInfo() {
-        this.appClient.sendToAdmin('AppHandshakeMsg', {
-            AppIDString: this.appId
+        this.emit('AdminMsg', { 
+            event: 'AppHandshakeMsg', 
+            data: {
+                AppIDString: this.appId
+            }
         });
     }
 

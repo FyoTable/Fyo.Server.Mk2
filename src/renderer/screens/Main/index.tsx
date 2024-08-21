@@ -44,11 +44,7 @@ export function MainScreen() {
 
         <LeftPane />
         <div>
-          [ No Connected Game]
-
-
-
-          <h2>State: { connStore.socket !== undefined ? 'connected' : 'disconnect' }</h2>
+          <h2>State: { (connStore.socket !== undefined) ? 'connected' : 'disconnect' }</h2>
 
           <div>
             <h2>Game: { connStore.game }</h2>
@@ -58,7 +54,7 @@ export function MainScreen() {
             <h2>Players</h2>
             <div>
               { connStore.players.map((player, index) => (
-                <div key={index}>{player.DeviceId} | { player.ping }</div>
+                <div key={index}>{player.SGID} | { player.Controller } | { player.ping } { player.TimingOut && 'Timing Out'}</div>
               )) }
             </div>
           </div>

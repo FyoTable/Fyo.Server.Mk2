@@ -22,10 +22,35 @@ export default class FyoManager {
         app.on('AppEndMsg', this.AppEndMsg.bind(this));
         app.on('SGRedirectMsg', this.SGRedirectMsg.bind(this));
         app.on('SGUpdateMsg', this.AppUpdateMsg.bind(this));
+        app.on('AdminMsg', (msg: { event: string, data: any }) => {
+            // send to all admins
+            this.admins.forEach(admin => {
+                admin.AdminMsg(msg.event, msg.data);
+            });
+        });
+        app.on('disconnected', () => {
+            // remove from apps list
+            this.apps = this.apps.filter(a => a !== app);
+            if (this.activeApp === app) {
+                this.activeApp = undefined;
+                if (this.apps.length > 0) {
+                    this.activeApp = this.apps[0];
+                    this.activeApp.Focused();
+                }
+                
+                // update admins
+                this.admins.forEach(admin => {
+                    admin.AdminMsg('AppEndMsg', {
+                        appId: this.activeApp?.appId
+                    });
+                });
+            }
+        });
         this.activeApp = app;
         this.apps.push(app);
         console.log(this.gamePads);
         this.gamePads.forEach(gamePad => { app.SGConnected(gamePad); });
+        app.UpdateAdminInfo();
     }
 
     AppEndMsg() {
@@ -47,7 +72,6 @@ export default class FyoManager {
     RegisterGamePad(client: Client) {
         const gamePad = new GamePadClient(client, this.getNextSGID());
         this.gamePads.push(gamePad);
-        gamePad.Init();
         gamePad.on('SGUpdateMsg', (data: SGUpdateMsg) => {
             console.log(data);
             // send to the active app
@@ -66,10 +90,17 @@ export default class FyoManager {
                 console.error('Gamepad disconnected but no active app');
             }
         });
+        gamePad.on('AdminMsg', (msg: { event: string, data: any }) => {
+            // send to all admins
+            this.admins.forEach(admin => {
+                admin.AdminMsg(msg.event, msg.data);
+            });
+        });
         if (this.gamePads.length === 1) {
             gamePad.SetPrimary();
         }
         this.gamePadMap[client.deviceId!] = gamePad;
+        gamePad.Init();
 
         if (this.activeApp) {
             this.activeApp.SGConnected(gamePad);
@@ -80,7 +111,11 @@ export default class FyoManager {
 
     RegisterAdmin(client: Client) {
         const admin = new AdminClient(client, this);
+        console.log('[Admin] Registering admin');
         this.admins.push(admin);
+
+        // send all gamepads
+        this.gamePads.forEach(gp => gp.UpdateAdminInfo());
     }
 
     SGRedirectMsg(data: SGRedirectMsg) {

@@ -11,7 +11,7 @@ export interface WindowStore {
     ipaddress: string[],
     controllers: string[],
     game: string,
-    players: { DeviceId: string, ping?: number }[],
+    players: { SGID: string, Controller: string, ping?: number, TimingOut?: boolean }[],
     messages: { message: string, data?: any }[],
     setSocket: (value: any) => void,
     connect: () => void
@@ -30,7 +30,7 @@ export function WindowStoreProvider({
   children: React.ReactNode
 }) {
   const initializedMessages: { message: string, data?: any }[] = [];
-  const initializedPlayers: { DeviceId: string, ping?: number }[] = [];
+  const initializedPlayers: { DeviceId: string, ping?: number, TimingOut?: boolean }[] = [];
   const [state, setState] = useState({
     about: { isOpen: false, setAboutWindowState },
     conn: { socket: null, ipaddress: [], controllers: [], game: '', players: initializedPlayers, messages: initializedMessages, setSocket, connect },
@@ -76,7 +76,7 @@ export function WindowStoreProvider({
           },
         }));
       });
-
+      
       socket.on('status', (data) => {
         console.log('status', data);
 
@@ -232,6 +232,24 @@ export function WindowStoreProvider({
           },
         }));
     });
+
+    // socket.on('SGTimingOutMsg', function (data) {
+    //   console.log('timing out', data);
+    //   const players = state.conn.players;
+    //     for (var i = 0; i < players.length; i++) {
+    //         if (players[i].DeviceId == data.DeviceId) {
+    //             players[i].timingOut = true;
+    //             break;
+    //         }
+    //     }
+    //     setState((state) => ({
+    //       ...state,
+    //       conn: {
+    //         ...state.conn,
+    //         players,
+    //       },
+    //     }));
+    // });
 
       socket.on('SGRedirectMsg', function(data) {
         console.log('SGRedirectMsg', data);

@@ -92,6 +92,10 @@ export default class AdminClient extends EventListener {
         this.fyoManager.SGRedirectMsg(data);
     }
 
+    AdminMsg(event: string, data: any) {
+        this.client.send(event, data);
+    }
+
     private getConnected() {
         var result: any[] = [];
 

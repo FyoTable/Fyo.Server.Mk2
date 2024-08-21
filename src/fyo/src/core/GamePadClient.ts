@@ -27,6 +27,7 @@ export default class GamePadClient extends EventListener {
         this.client.on('SGReconnectMsg', () => { });
         this.client.on('disconnect', this.disconnect.bind(this));
         this.client.send('SGHandshakeMsg');
+        this.UpdateAdminInfo();
     }
 
     SGUpdateMsg(data: SGUpdateMsg) {
@@ -46,13 +47,16 @@ export default class GamePadClient extends EventListener {
     }
 
     UpdateAdminInfo() {
-        this.client.sendToAdmin('SGHandshakeIdentMsg', {
-            DeviceId: this.client.deviceId,
-            SGID: this.id,
-            Primary: this.primary,
-            Controller: this.controller,
-            Info: this.info,
-            TimingOut: this.timingOut
+        this.emit('AdminMsg', { 
+            event: 'SGHandshakeIdentMsg', 
+            data: {
+                DeviceId: this.client.deviceId,
+                SGID: this.id,
+                Primary: this.primary,
+                Controller: this.controller,
+                Info: this.info,
+                TimingOut: this.timingOut
+            }
         });
     }
 
@@ -84,10 +88,10 @@ export default class GamePadClient extends EventListener {
                 DeviceId: this.client.deviceId
             });
 
-            this.client.sendToAdmin('SGDisconnectMsg', {
+            this.emit('AdminMsg', { event: 'SGDisconnectMsg', data: {
                 SGID: this.id,
                 DeviceId: this.client.deviceId
-            });
+            }});
 
             // After 15 seconds full drop
         }, 15000);
@@ -97,6 +101,10 @@ export default class GamePadClient extends EventListener {
             SGID: this.id,
             DeviceId: this.client.deviceId
         });
+        this.emit('AdminMsg', { event: 'SGTimingOutMsg', data: {
+            SGID: this.id,
+            DeviceId: this.client.deviceId
+        }});
         this.UpdateAdminInfo();
     }
 
