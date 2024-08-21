@@ -14,6 +14,8 @@
             <div class="text-lcd toolbar" style="position: absolute; top: 0px; right: 0px; left: 0px; z-index: 0">
                 <img src="" style="display:none;" id="profilePic" />
                 <span id="text-message">PLAYER</span></div>
+
+                <button id="test-button" style="margin-top: 100px">MSG TEST</button>
         </div>
 
         <!-- Socket.io is required for FyoGameTable -->
@@ -61,6 +63,11 @@
                         document.getElementById('text-message').innerText = 'PRIMARY ' + playerId;
                         break;
                 }
+            });
+
+            document.getElementById('test-button').addEventListener('click', function() {
+                console.log('Emit SGUpdateMsg');
+                connecter.socket.emit('SGUpdateMsg', { MessageType: 'TestMessage', data: { Message: 'Hello World' } });
             });
 
         </script>

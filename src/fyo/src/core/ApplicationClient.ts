@@ -46,6 +46,17 @@ export default class ApplicationClient extends EventListener {
         });
     }
 
+    SGDisconnected(gamePad: GamePadClient) {
+        if (this.ended) return;
+
+        // Tell the application that a gamepad has disconnected
+        this.appClient.send('SGDisconnected', {
+            SGID: gamePad.id,
+            DeviceId: gamePad.client.deviceId,
+            Controller: gamePad.controller,
+        });
+    }
+
     AppEndMsg() {
         // Let the Fyo Manager know that the application is ending
         this.emit('AppEndMsg');
@@ -59,6 +70,11 @@ export default class ApplicationClient extends EventListener {
     SGUpdateMsg(data: SGUpdateMsg) {
         // Tell the FyoManager that there's a new update message from the game
         this.emit('SGUpdateMsg', data);
+    }
+
+    SendSGUpdateMsg(data: SGUpdateMsg) {
+        // Send a message to the game
+        this.appClient.send('SGUpdateMsg', data);
     }
 
     Focused() {

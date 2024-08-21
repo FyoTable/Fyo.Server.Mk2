@@ -21,7 +21,7 @@ export default class GamePadClient extends EventListener {
     }
 
     Init() {
-        this.client.on('SGUpdateMsg', this.SGUpdateMsg.bind(this));
+        this.client.listen('SGUpdateMsg', this.SGUpdateMsg.bind(this));
         this.client.on('SGTimingOutMsg', () => { });
         this.client.on('SGDisconnectMsg', () => { });
         this.client.on('SGReconnectMsg', () => { });
@@ -30,6 +30,7 @@ export default class GamePadClient extends EventListener {
     }
 
     SGUpdateMsg(data: SGUpdateMsg) {
+        console.log('[GamePad] SGUpdateMsg');
         data.SGID = this.id;
         data.DeviceId = this.client.deviceId!;
         this.emit('SGUpdateMsg', data);

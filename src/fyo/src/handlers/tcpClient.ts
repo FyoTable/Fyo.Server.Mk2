@@ -33,6 +33,10 @@ export default class TCPClient extends Client {
         this.Latency();
     }
 
+    listen(event: string, callback: any): void {
+        this.on(event, callback);
+    }
+
     processMessage(event: string, data: any) {
         
     }
@@ -92,6 +96,7 @@ export default class TCPClient extends Client {
     }
 
     private sendMessage(data: any) {
+        console.log('Sending: ', data, JSON.stringify(data));
         this.socket.write(JSON.stringify(data) + '\n');
     }
 

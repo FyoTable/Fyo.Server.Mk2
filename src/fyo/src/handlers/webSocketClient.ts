@@ -44,6 +44,10 @@ export default class WebSocketClient extends Client {
         this.Latency();
     }
 
+    listen(event: string, callback: any): void {
+        this.socket.on(event, callback);
+    }
+
     send(event: string, ...args: any[]): void {
         super.send(event, ...args);
         this.socket.emit(event, ...args);
@@ -73,6 +77,7 @@ export default class WebSocketClient extends Client {
     }
 
     private SGHandshakeIdentMsg(data: any) {
+        console.log('SGHandshakeIdentMsg', data);
         this.deviceId = data.deviceId;
         this.controller = data.controller;
         this.info = data.info;

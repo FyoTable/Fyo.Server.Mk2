@@ -18,4 +18,8 @@ export default class Client extends EventListener {
     sendToAdmin(event: string, ...args: any[]) {
         
     }
+
+    listen(event: string, callback: Function) {
+        
+    }
 }

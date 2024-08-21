@@ -24,6 +24,7 @@ export default class FyoManager {
         app.on('SGUpdateMsg', this.AppUpdateMsg.bind(this));
         this.activeApp = app;
         this.apps.push(app);
+        console.log(this.gamePads);
         this.gamePads.forEach(gamePad => { app.SGConnected(gamePad); });
     }
 
@@ -46,8 +47,24 @@ export default class FyoManager {
     RegisterGamePad(client: Client) {
         const gamePad = new GamePadClient(client, this.getNextSGID());
         this.gamePads.push(gamePad);
+        gamePad.Init();
+        gamePad.on('SGUpdateMsg', (data: SGUpdateMsg) => {
+            console.log(data);
+            // send to the active app
+            if (this.activeApp) {
+                this.activeApp.SendSGUpdateMsg(data);
+            } else {
+                console.error('Gamepad sent message but no active app');
+            }
+        });
         gamePad.on('SGDisconnectMsg', () => {
             this.gamePads.splice(this.gamePads.indexOf(gamePad), 1);
+            // inform the active app
+            if (this.activeApp) {
+                this.activeApp.SGDisconnected(gamePad);
+            } else {
+                console.error('Gamepad disconnected but no active app');
+            }
         });
         if (this.gamePads.length === 1) {
             gamePad.SetPrimary();
@@ -57,7 +74,7 @@ export default class FyoManager {
         if (this.activeApp) {
             this.activeApp.SGConnected(gamePad);
         } else {
-            console.error('Client connected but no active app');
+            console.error('GamePad connected but no active app');
         }
     }
 
@@ -81,7 +98,7 @@ export default class FyoManager {
             console.error('App ID mismatch:', data.appId, ' is not the active app');
             return;
         }
-        
+
         // update all game pads
         this.gamePads.forEach(gp => gp.SGUpdateMsg(data.data));
     }
