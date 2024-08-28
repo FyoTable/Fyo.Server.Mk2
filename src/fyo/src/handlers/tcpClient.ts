@@ -13,6 +13,8 @@ export default class TCPClient extends Client {
     constructor(socket: net.Socket, fyoManager: FyoManager) {
         super();
 
+        console.log('[SERVER] New TCP Client connected');
+
         this.socket = socket;
         this.fyoManager = fyoManager;
 
@@ -59,12 +61,12 @@ export default class TCPClient extends Client {
         }
     }
 
-    send(event: string, ...args: any[]): void {
-        super.send(event, ...args);
-        this.sendMessage({event, ...args});
+    send(event: string, data: any): void {
+        super.send(event, data);
+        this.sendMessage({event, ...data});
     }
 
-    sendToAdmin(event: string, ...args: any[]): void {
+    sendToAdmin(event: string, data: any): void {
         // this.io.to('admin').emit(event, ...args);
     }
 

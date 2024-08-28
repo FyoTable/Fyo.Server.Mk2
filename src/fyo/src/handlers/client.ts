@@ -11,11 +11,11 @@ export default class Client extends EventListener {
         super();
     }
 
-    send(event: string, ...args: any[]) {
+    send(event: string, data: any) {
         
     }
 
-    sendToAdmin(event: string, ...args: any[]) {
+    sendToAdmin(event: string, data: any) {
         
     }
 

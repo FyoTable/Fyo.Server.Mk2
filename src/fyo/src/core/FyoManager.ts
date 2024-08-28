@@ -73,7 +73,7 @@ export default class FyoManager {
         const gamePad = new GamePadClient(client, this.getNextSGID());
         this.gamePads.push(gamePad);
         gamePad.on('SGUpdateMsg', (data: SGUpdateMsg) => {
-            console.log(data);
+            console.log('FyoManager, SGUpdateMsg', data);
             // send to the active app
             if (this.activeApp) {
                 this.activeApp.SendSGUpdateMsg(data);

@@ -80,6 +80,7 @@ export default class ApplicationClient extends EventListener {
 
     SendSGUpdateMsg(data: SGUpdateMsg) {
         // Send a message to the game
+        console.log('Send message to game', data);
         this.appClient.send('SGUpdateMsg', data);
     }
 

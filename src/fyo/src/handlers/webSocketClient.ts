@@ -48,13 +48,13 @@ export default class WebSocketClient extends Client {
         this.socket.on(event, callback);
     }
 
-    send(event: string, ...args: any[]): void {
-        super.send(event, ...args);
-        this.socket.emit(event, ...args);
+    send(event: string, data: any): void {
+        super.send(event, data);
+        this.socket.emit(event, data);
     }
 
-    sendToAdmin(event: string, ...args: any[]): void {
-        this.io.to('admin').emit(event, ...args);
+    sendToAdmin(event: string, data: any): void {
+        this.io.to('admin').emit(event, data);
     }
 
     private Disconnect() {
