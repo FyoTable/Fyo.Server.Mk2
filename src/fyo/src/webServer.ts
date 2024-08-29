@@ -7,6 +7,9 @@ import ConnectionHandler from './handlers/connectionHandler';
 import WebsocketHandler from './handlers/websocketHandler';
 import FyoManager from './core/FyoManager';
 import TCPHandler from './handlers/tcpHandler';
+import AdminRoutes from './routes/admin';
+import ProxyHandle from './proxy';
+import sendFile from './utils/sendFile';
 
 const PORT = 3000;
 
@@ -50,6 +53,7 @@ export default class WebServer {
             res.send('pong');
         });
         routesQR(this.app);
+        AdminRoutes(this.app);
     }
 
     async start(): Promise<void> {
@@ -60,6 +64,19 @@ export default class WebServer {
                 // Setup websocket handler and tcp handler
                 this.handlers.push(new WebsocketHandler(this.server!, this.fyoManager));
                 this.handlers.push(new TCPHandler(this.fyoManager));
+
+                const proxyHandler = new ProxyHandle(this.handlers[0] as WebsocketHandler);
+                proxyHandler.onWebRequest((route, res) => {
+                    let routePath = __dirname + '/../game_files' + route;
+                    let routePath2 = __dirname + '/../bower_components' + route;
+                    if (!sendFile(routePath, res)) {
+                        if (!sendFile(routePath2, res)) {
+                            console.log('[Not Found]', routePath);
+                            res('test');
+                        }
+                    }
+                });
+                proxyHandler.connect();
 
                 resolve();
             });
