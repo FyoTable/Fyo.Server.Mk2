@@ -1,4 +1,7 @@
 import styles from './styles.module.sass'
+const { App } = window
+
+import link from '../../../resources/public/icon-link.png'
 
 export function LeftPane() {
 
@@ -10,8 +13,7 @@ export function LeftPane() {
   }
 
   const openExternal = (url: string) => {
-        const { shell } = window.require('electron')
-        shell.openExternal(url);
+    App.openURL(url);
     }
 
   return (
@@ -34,11 +36,11 @@ export function LeftPane() {
                 </div>
             </div>
             <div className={styles.linkBlock}>
-                <img src="/icon-link.png" /> <a href="javascript:void(0);" onClick={() => openExternal('https://github.com/ghoofman/FyoGameTable.Controller.API')}>Github Web API</a>
+                <img src={link} /> <a href="javascript:void(0);" onClick={() => openExternal('https://github.com/ghoofman/FyoGameTable.Controller.API')}>Github Web API</a>
                 <br />
-                <img src="/icon-link.png" /> <a href="javascript:void(0);" onClick={() => openExternal('https://github.com/ghoofman/FyoTable')}>Github Game Examples</a>
+                <img src={link} /> <a href="javascript:void(0);" onClick={() => openExternal('https://github.com/ghoofman/FyoTable')}>Github Game Examples</a>
                 <br />
-                <img src="/icon-link.png" /> <a href="javascript:void(0);" onClick={() => openExternal('http://docs.fyo.com')}>Fyo Game Table Docs</a>
+                <img src={link} /> <a href="javascript:void(0);" onClick={() => openExternal('http://docs.fyo.com')}>Fyo Game Table Docs</a>
             </div>
         </div>
     </div>

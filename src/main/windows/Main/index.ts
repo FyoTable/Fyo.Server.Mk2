@@ -4,6 +4,7 @@ import { join } from 'path'
 import { ENVIRONMENT } from 'shared/constants'
 import { createWindow } from 'main/factories'
 import { displayName } from '~/package.json'
+import { registerMainWindowOpenURLByIPC } from './ipcs'
 
 export async function MainWindow() {
   const window = createWindow({
@@ -37,6 +38,8 @@ export async function MainWindow() {
   window.on('close', () =>
     BrowserWindow.getAllWindows().forEach((window) => window.destroy())
   )
+
+  registerMainWindowOpenURLByIPC();
 
   return window
 }
