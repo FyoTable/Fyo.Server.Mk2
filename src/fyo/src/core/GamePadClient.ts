@@ -26,7 +26,8 @@ export default class GamePadClient extends EventListener {
         this.client.on('SGDisconnectMsg', () => { });
         this.client.on('SGReconnectMsg', () => { });
         this.client.on('disconnect', this.disconnect.bind(this));
-        this.client.send('SGHandshakeMsg', { SGID: this.id });
+        this.client.send('SGHandshakeMsg', { SGID: this.id, DeviceId: this.client.deviceId });
+        this.client.send('SGHandshakeIdentMsg', { SGID: this.id, DeviceId: this.client.deviceId });
         this.UpdateAdminInfo();
     }
 
