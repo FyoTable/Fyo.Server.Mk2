@@ -31,7 +31,7 @@ export default function AdminRoutes(app: express.Application) {
 
     app.post('/config', function(req, res) {
         console.log(req.body);
-        config.data.config = req.body;
+        config.data = req.body;
         config.Write();
         res.send('success');
     });
