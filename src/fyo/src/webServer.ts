@@ -36,6 +36,7 @@ export default class WebServer {
         this.app.enable('trust proxy');
         this.app.options('*', cors());
         this.app.use(fileUpload());
+        this.app.use(express.json());
 
         this.staticPaths();
         this.routes();
