@@ -21,13 +21,19 @@ export default function AdminRoutes(app: express.Application) {
         // Use the mv() method to place the file somewhere on your server
         const p = path.resolve(__dirname + '/../uploads/');
         console.log(p, req.params.filename);
-        uploadFile.mv(p + req.params.filename, function(err) {
+        uploadFile.mv(p + '/' + req.params.filename, function(err) {
           if (err)
             return res.status(500).send(err);
       
           res.send('File uploaded!');
         });
       });
+
+    app.post('/config', function(req, res) {
+        config.data.config = req.body;
+        config.Write();
+        res.send('success');
+    });
 
     app.post('/config/:id', function(req, res) {
         config.data.config.id = req.params.id;
