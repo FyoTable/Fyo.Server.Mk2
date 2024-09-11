@@ -19,7 +19,9 @@ export default function AdminRoutes(app: express.Application) {
         let uploadFile = r.files.file;
       
         // Use the mv() method to place the file somewhere on your server
-        uploadFile.mv(path.resolve(__dirname + '/../uploads/') + req.params.filename, function(err) {
+        const p = path.resolve(__dirname + '/../uploads/');
+        console.log(p, req.params.filename);
+        uploadFile.mv(p + req.params.filename, function(err) {
           if (err)
             return res.status(500).send(err);
       
