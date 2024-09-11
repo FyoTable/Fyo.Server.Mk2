@@ -9,6 +9,24 @@ let updating = false;
 
 export default function AdminRoutes(app: express.Application) {
 
+    app.post('/upload/:filename', function(req, res) {
+        const r: any = req;
+        console.log(r.files, r.file);
+        if (!r.files || Object.keys(r.files).length === 0) {
+          return res.status(400).send('No files were uploaded.');
+        }
+      
+        let uploadFile = r.files.file;
+      
+        // Use the mv() method to place the file somewhere on your server
+        uploadFile.mv(path.resolve(__dirname + '/../uploads/') + req.params.filename, function(err) {
+          if (err)
+            return res.status(500).send(err);
+      
+          res.send('File uploaded!');
+        });
+      });
+
     app.post('/config/:id', function(req, res) {
         config.data.config.id = req.params.id;
         config.Write();

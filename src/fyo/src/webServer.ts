@@ -10,6 +10,7 @@ import TCPHandler from './handlers/tcpHandler';
 import AdminRoutes from './routes/admin';
 import ProxyHandle from './proxy';
 import sendFile from './utils/sendFile';
+import fileUpload from 'express-fileupload';
 
 const PORT = 3000;
 
@@ -34,6 +35,7 @@ export default class WebServer {
         this.app.use(cors());
         this.app.enable('trust proxy');
         this.app.options('*', cors());
+        this.app.use(fileUpload());
 
         this.staticPaths();
         this.routes();
