@@ -62,10 +62,14 @@ export default class GamePadClient extends EventListener {
     }
 
     Redirect(controller: string) {
+        console.log('GamePad being told to redirect to controller: ' + controller);
         this.controller = controller;
         this.client.send('SGUpdateMsg', {
             message: 'Redirect',
             data: this.controller
+        });
+        this.client.send('SGRedirectMsg', {
+            controller: this.controller
         });
         this.UpdateAdminInfo();
     }

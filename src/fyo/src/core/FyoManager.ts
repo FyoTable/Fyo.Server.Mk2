@@ -119,12 +119,19 @@ export default class FyoManager {
     }
 
     SGRedirectMsg(data: SGRedirectMsg) {
+        console.log('SGRedirectMsg from FyoManager', data);
+        if (data.SGID === -1) {
+            // Redirect all gamepads
+            this.gamePads.forEach(gp => gp.Redirect(data.Controller));
+            return;
+        }
         // Find the gamepad
         const gamePad = this.gamePads.find(gp => gp.id === data.SGID);
         if (gamePad) {
+            console.log('Redirecting controller to: ' + data.Controller);
             gamePad.Redirect(data.Controller);
         } else {
-            console.error('Gamepad not found');
+            console.error('Gamepad not found: ' + data.SGID);
         }
     }
 

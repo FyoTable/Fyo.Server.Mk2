@@ -44,12 +44,13 @@ export class FyoConnection extends EventListener {
         this.emit('connected');
 
 
-        this.socket.on('SGRedirectMsg', (path: string) => {
-            if (path == this.controller) {
+        this.socket.on('SGRedirectMsg', (data: { controller: string }) => {
+            console.log('SGRedirectMsg', data);
+            if (data.controller == this.controller) {
                 // we're already at this controller
                 return;
             }
-            window.location.href = '/' + path;
+            window.location.href = '/' + data.controller;
         });
 
         this.socket.on('SGUpdateMsg', (msg: any) => {

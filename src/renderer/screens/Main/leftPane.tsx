@@ -8,7 +8,7 @@ export function LeftPane() {
   const address = '127.0.0.1';
 
   const openWeb = () => {
-    var win = window.open(`http://${address}:3000`, '_blank');
+    var win = window.open(`http://${address}:3000/base_controller`, '_blank');
     win!.focus();
   }
 
