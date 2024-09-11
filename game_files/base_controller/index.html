@@ -67,7 +67,7 @@
 
             document.getElementById('test-button').addEventListener('click', function() {
                 console.log('Emit SGUpdateMsg');
-                connecter.socket.emit('SGUpdateMsg', { MessageType: 'TestMessage', data: { Message: 'Hello World' } });
+                connecter.send('TestMessage', { Message: 'Hello World' });
             });
 
         </script>
