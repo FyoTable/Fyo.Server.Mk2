@@ -13,7 +13,7 @@ export class Config {
     }
     
     Read() {
-        var p = path.resolve(__dirname + "/../../config.json");
+        var p = path.resolve(__dirname + "/../../../config.json");
 
         if(fs.existsSync(p)) {
             let contents = fs.readFileSync(__dirname + "/../../config.json");
@@ -30,7 +30,9 @@ export class Config {
 
     Write() {
         let contents = JSON.stringify(this.data);
-        fs.writeFileSync(__dirname + "/../../config.json", contents);
+        const p = path.resolve(__dirname + "/../../../config.json");
+        console.log('Writing config to ', p);
+        fs.writeFileSync(p, contents);
     }
 
     Get(key) {
