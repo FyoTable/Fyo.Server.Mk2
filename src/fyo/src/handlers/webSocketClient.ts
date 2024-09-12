@@ -55,6 +55,7 @@ export default class WebSocketClient extends Client {
     }
 
     sendToAdmin(event: string, data: any): void {
+        this.addMessageID(data);
         this.io.to('admin').emit(event, data);
     }
 

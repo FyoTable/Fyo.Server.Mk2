@@ -99,8 +99,12 @@ export function WindowStoreProvider({
         console.log('controller joined', data);
         const players = state.conn.players;
         const messages = state.conn.messages;
+        if (messages.find(msg => msg.data?.messageId == data.messageId)) {
+          return;
+        }
         messages.unshift({
-            message: 'SGHandshakeIdentMsg'
+            message: 'SGHandshakeIdentMsg',
+            data: data
         });
 
         var found = false;
@@ -126,7 +130,11 @@ export function WindowStoreProvider({
     });
 
     socket.on('SGUpdateMsg', function (data) {
+        console.log('SGUpdateMsg', data);
       const messages = state.conn.messages;
+      if (messages.find(msg => msg.data?.messageId == data.messageId)) {
+        return;
+      }
         messages.unshift({
             message: 'SGUpdateMsg',
             data: data

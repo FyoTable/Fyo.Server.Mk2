@@ -49,7 +49,7 @@ export function MainScreen() {
 
         <LeftPane />
         <div className={styles.rightPane}>
-          <h2>State: { (connStore.socket !== undefined) ? 'connected' : 'disconnect' }</h2>
+          <h2>Server Connected: { (connStore.socket !== undefined) ? 'YES' : 'NO' }</h2>
 
           <div>
             <h2>Game: { connStore.game }</h2>
@@ -85,11 +85,24 @@ export function MainScreen() {
 
           <div>
             <h2>Messages</h2>
-            <div>
-              { connStore.messages.map((message, index) => (
-                <div key={index}>{message.message}</div>
-              )) }
-            </div>
+            <table>
+              <thead>
+                <tr>
+                  <th></th>
+                  <th>Message</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody>
+                { connStore.messages.map((message, index) => (
+                  <tr key={index}>
+                    <td>{message.data?.messageId}</td>
+                    <td>{message.message}</td>
+                    <td>{JSON.stringify(message.data || {}) }</td>
+                  </tr>
+                )) }
+              </tbody>
+            </table>
           </div>
         </div>
       </div>

@@ -4,6 +4,7 @@ export default class Client extends EventListener {
     deviceId?: string;
     controller?: string;
     info?: any;
+    messageId: number = 0;
 
     forcedDisconnect: boolean = false;
 
@@ -11,8 +12,13 @@ export default class Client extends EventListener {
         super();
     }
 
+    addMessageID(data: any) {
+        this.messageId++;
+        data.messageId = this.messageId;
+    }
+
     send(event: string, data: any) {
-        
+        this.addMessageID(data);
     }
 
     sendToAdmin(event: string, data: any) {

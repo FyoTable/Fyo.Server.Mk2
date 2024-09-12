@@ -87,6 +87,11 @@ export default class FyoManager {
             } else {
                 console.error('Gamepad sent message but no active app');
             }
+
+            // Send to admins
+            this.admins.forEach(admin => {
+                admin.AdminMsg('SGUpdateMsg', data);
+            });
         });
         gamePad.on('SGDisconnectMsg', () => {
             this.gamePads.splice(this.gamePads.indexOf(gamePad), 1);
