@@ -15,7 +15,8 @@ export interface WindowStore {
     messages: { message: string, data?: any }[],
     setSocket: (value: any) => void,
     connect: () => void
-  }
+  },
+  socket: any
 }
 
 const WindowStoreContext = createContext({} as WindowStore)
@@ -34,6 +35,7 @@ export function WindowStoreProvider({
   const [state, setState] = useState({
     about: { isOpen: false, setAboutWindowState },
     conn: { socket: null, ipaddress: [], controllers: [], game: '', players: initializedPlayers, messages: initializedMessages, setSocket, connect },
+    socket: null,
   })
 
   function connect() {
@@ -43,6 +45,8 @@ export function WindowStoreProvider({
 
     const URL = process.env.NODE_ENV === 'production' ? '' : 'http://localhost:3000';
     const socket = io(URL);
+    console.log(socket);
+    setSocket(socket);
 
     socket.on('connect', () => {
       console.log('connected');
@@ -257,7 +261,6 @@ export function WindowStoreProvider({
       });
     });
 
-    setSocket(socket);
   }
 
   function setSocket(value: any) {

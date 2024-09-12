@@ -89,6 +89,7 @@ export default class AdminClient extends EventListener {
 
     // Tell a SocketGamePad to redirect to a different controller
     SGRedirectMsg(data: SGRedirectMsg) {
+        console.log('Admin telling FyoManager to redirect', data);
         this.fyoManager.SGRedirectMsg(data);
     }
 

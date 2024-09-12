@@ -18,6 +18,7 @@ export default class WebSocketClient extends Client {
         socket.on('AppHandshakeMsg', this.AppHandshakeMsg.bind(this));
         socket.on('AdminHandshakeMsg', this.AdminHandshakeMsg.bind(this));
         socket.on('SGHandshakeIdentMsg', this.SGHandshakeIdentMsg.bind(this));
+        socket.on('SGRedirectMsg', this.SGRedirectMsg.bind(this));
         
         socket.conn.on('upgrade', function (transport) {
             console.log(colors.yellow('[Upgrade]'), 'Transport changed: ', socket.conn.transport.name);
@@ -60,6 +61,11 @@ export default class WebSocketClient extends Client {
     private Disconnect() {
         console.log(colors.yellow('[Disconnect]'), 'client dropped');
         this.emit('disconnect');
+    }
+
+    private SGRedirectMsg(data: any) {
+        console.log('SGRedirectMsg', data);
+        this.emit('SGRedirectMsg', data);
     }
 
     private AppHandshakeMsg(data: any) {

@@ -15,6 +15,7 @@ export function MainScreen() {
   const navigate = useNavigate()
   const store = useWindowStore().about;
   const connStore = useWindowStore().conn;
+  const socketStore = useWindowStore().socket;
 
   useEffect(() => {
     App.sayHelloFromBridge()
@@ -36,6 +37,10 @@ export function MainScreen() {
     store.setAboutWindowState(true)
   }
 
+  const redirect = (SGID: string, val: string) => {
+    socketStore!.emit('SGRedirectMsg', { SGID, Controller: val });
+  }
+
   const address = '127.0.0.1';
 
   return (
@@ -43,7 +48,7 @@ export function MainScreen() {
       <div className={styles.mainContent} >
 
         <LeftPane />
-        <div>
+        <div className={styles.rightPane}>
           <h2>State: { (connStore.socket !== undefined) ? 'connected' : 'disconnect' }</h2>
 
           <div>
@@ -52,11 +57,30 @@ export function MainScreen() {
 
           <div>
             <h2>Players</h2>
-            <div>
-              { connStore.players.map((player, index) => (
-                <div key={index}>{player.SGID} | { player.Controller } | { player.ping } { player.TimingOut && 'Timing Out'}</div>
-              )) }
-            </div>
+            <table>
+              <thead>
+                <tr>
+                  <th>SGID</th>
+                  <th>Controller</th>
+                  <th>Ping</th>
+                </tr>
+              </thead>
+              <tbody>
+                { connStore.players.map((player, index) => (
+                  <tr key={index}>
+                    <td>{player.SGID}</td>
+                    <td>
+                      <select value={player.Controller} onChange={(e) => redirect(player.SGID, e.target.value)}>
+                        { connStore.controllers.map((controller, index) => (
+                          <option key={controller} value={controller}>{controller}</option>
+                        )) }
+                      </select>
+                    </td>
+                    <td>{ player.ping } { player.TimingOut && 'Timing Out'}</td>
+                  </tr>
+                )) }
+              </tbody>
+            </table>
           </div>
 
           <div>
