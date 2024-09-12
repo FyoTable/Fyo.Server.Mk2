@@ -1,5 +1,6 @@
 import Client from '../handlers/client';
 import EventListener from '../utils/eventListener';
+import runApp from '../utils/runApp';
 import { SGUpdateMsg } from './Messages';
 
 export default class GamePadClient extends EventListener {
@@ -26,6 +27,10 @@ export default class GamePadClient extends EventListener {
         this.client.on('SGDisconnectMsg', () => { });
         this.client.on('SGReconnectMsg', () => { });
         this.client.on('disconnect', this.disconnect.bind(this));
+        this.client.on('SGStartMsg', (data: { android: string, win: string}) => {
+            console.log(data);
+            runApp(data);
+        });
         this.client.send('SGHandshakeMsg', { SGID: this.id, DeviceId: this.client.deviceId });
         this.client.send('SGHandshakeIdentMsg', { SGID: this.id, DeviceId: this.client.deviceId });
         this.UpdateAdminInfo();

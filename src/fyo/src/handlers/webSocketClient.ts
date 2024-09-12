@@ -19,6 +19,9 @@ export default class WebSocketClient extends Client {
         socket.on('AdminHandshakeMsg', this.AdminHandshakeMsg.bind(this));
         socket.on('SGHandshakeIdentMsg', this.SGHandshakeIdentMsg.bind(this));
         socket.on('SGRedirectMsg', this.SGRedirectMsg.bind(this));
+        socket.on('SGStartMsg', (data: { android: string, win: string}) => {
+            this.emit('SGStartMsg', data);
+        });
         
         socket.conn.on('upgrade', function (transport) {
             console.log(colors.yellow('[Upgrade]'), 'Transport changed: ', socket.conn.transport.name);

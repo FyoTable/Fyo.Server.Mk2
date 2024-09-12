@@ -1,0 +1,88 @@
+﻿<!doctype html>
+<html>
+	<head>
+		<title>Fyo Game Table - Marquee</title>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+
+		<!-- Base Fyo css -->
+		<link rel="stylesheet" href="/fyogametable/dist/fyo.css">
+		<!-- Specific to this controller -->
+		<link rel="stylesheet" href="/Marquee/styles.css">
+	</head>
+	<body class="body">
+
+		<div class="row">
+			<img class="column column-1" src="/Marquee/img/mobileheader.svg" alt=""/>
+		</div>
+
+		<div>
+			<img class="column column-1" src="/Marquee/img/choose.svg" alt=""/>
+		</div>
+
+		<div id="games" class="row">
+
+		</div>
+
+		<div>
+			<img class="column column-1" src="/Marquee/img/footer.svg" alt=""/>
+		</div>
+
+        <!-- Socket.io is required for FyoGameTable -->
+        <script src="/socket.io/socket.io.js"></script>
+
+        <script type="text/javascript">
+            var exports = {};
+        </script>
+        <script src="/modernizr-custom.js"></script>
+        <script type="module" src="/fyo-web.js"></script>
+
+		<!-- Controller specific setup -->
+        <script type="module">
+
+
+            var connecter = new FYO.FyoConnection(io, 'Marquee.Mk3');
+            connecter.on('SGUpdateMsg', function (data) {
+                console.log(data);
+            });
+
+			const data = [{
+					app: {
+						android: 'com.fyo.texasholdem',
+						win: 'C:/BlackJack/BlackJack.exe'
+					},
+					img: 'cover1texas.svg',
+					imgURL: '/Marquee.Mk3/img/cover1texas.svg'
+				},{
+					app: {
+						android: 'io.DCCKLLC.TicTacToe',
+						win: ''
+					},
+					img: 'cover2.svg',
+					imgURL: '/TicTacToe/cover2.svg'
+				},{
+					app: {
+						android: 'io.DCCKLLC.ZombieGame',
+						win: ''
+					},
+					imgURL: '/ZombieGame/cover3.svg'
+				}];
+
+				var gamesEl = document.getElementById('games');
+				gamesEl.innerHTML = '';
+				data.map(function(g) {
+                    // add game
+                    var div = document.createElement('div');
+                    var img = document.createElement('img');
+                    img.setAttribute('src', g.imgURL);
+                    img.setAttribute('class', 'column column-1');
+                    div.appendChild(img);
+                    gamesEl.appendChild(div);
+                    img.onclick = function () {
+                        connecter.socket.emit('SGStartMsg', g.app);
+                    };
+					console.log(g);
+				});
+		</script>
+	</body>
+</html>
