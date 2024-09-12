@@ -55,6 +55,9 @@ export default class ApplicationClient extends EventListener {
             DeviceId: gamePad.client.deviceId,
             Controller: gamePad.controller,
         });
+
+        // Tell the gamepad to connect to the controller
+        gamePad.Redirect(this.controller);
     }
 
     SGDisconnected(gamePad: GamePadClient) {
@@ -91,7 +94,9 @@ export default class ApplicationClient extends EventListener {
     }
 
     Focused() {
+        console.log(this.appId, 'focused');
         this.appClient.send('AppFocusMsg', {});
+        this.SGRedirectMsg({ Controller: this.controller, SGID: -1 });
         this.UpdateAdminInfo();
     }
 

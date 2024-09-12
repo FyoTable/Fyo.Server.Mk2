@@ -29,6 +29,12 @@ export default class FyoManager {
             });
         });
         app.on('disconnected', () => {
+
+            console.log('App disconnected');
+
+            // Tell controllers game disconnected
+            this.AppEndMsg();
+
             // remove from apps list
             this.apps = this.apps.filter(a => a !== app);
             if (this.activeApp === app) {
@@ -62,6 +68,7 @@ export default class FyoManager {
             if (this.apps.length == 0) {
                 this.activeApp = undefined;
                 console.error('No active app!');
+                this.SGRedirectMsg({ SGID: -1, Controller: 'base_controller' });
             } else {
                 this.activeApp = this.apps[0];
                 this.activeApp.Focused();
