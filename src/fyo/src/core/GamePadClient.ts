@@ -41,6 +41,7 @@ export default class GamePadClient extends EventListener {
         console.log('[GamePad] SGUpdateMsg', data);
         data.SGID = this.id;
         data.DeviceId = this.client.deviceId!;
+        data.PlayerId = this.client.playerId;
         this.emit('SGUpdateMsg', data);
     }
 

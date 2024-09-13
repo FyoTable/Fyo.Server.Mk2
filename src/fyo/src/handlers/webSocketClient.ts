@@ -91,6 +91,7 @@ export default class WebSocketClient extends Client {
         this.deviceId = data.deviceId;
         this.controller = data.controller;
         this.info = data.info;
+        this.playerId = data.playerId;
         this.fyoManager.RegisterGamePad(this);
     }
 

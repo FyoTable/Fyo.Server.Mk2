@@ -54,6 +54,7 @@ export default class ApplicationClient extends EventListener {
             SGID: gamePad.id,
             DeviceId: gamePad.client.deviceId,
             Controller: gamePad.controller,
+            PlayerID: gamePad.client.playerId
         });
 
         // Tell the gamepad to connect to the controller

@@ -1,6 +1,7 @@
 export interface SGUpdateMsg {
     SGID: number;
     DeviceId: string;
+    PlayerId: number;
     MessageType: 'GameStarted' | 'Primary' | 'Redirect' | 'GameEnded' | 'SGStartMsg';
 }
 
