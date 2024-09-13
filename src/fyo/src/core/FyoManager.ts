@@ -1,4 +1,5 @@
 import Client from "../handlers/client";
+import runApp from "../utils/runApp";
 import AdminClient from "./AdminClient";
 import ApplicationClient from "./ApplicationClient";
 import GamePadClient from "./GamePadClient";
@@ -80,6 +81,13 @@ export default class FyoManager {
         const gamePad = new GamePadClient(client, this.getNextSGID());
         this.gamePads.push(gamePad);
         gamePad.on('SGUpdateMsg', (data: SGUpdateMsg) => {
+
+            if (data.MessageType === 'SGStartMsg') {
+                console.log('SGStartMsg', data);
+                const d: any = data;
+                runApp(d.data.app);
+                return;
+            }
             console.log('FyoManager, SGUpdateMsg', data);
             // send to the active app
             if (this.activeApp) {

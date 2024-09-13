@@ -99,7 +99,9 @@ export default class ProxyHandle {
     }
 
     proxy(e: string) {
+        console.log('Proxy', e);
         this.socket!.on(`${e}-Proxy`, (id, data) => {
+            console.log('proxy', e, id, data);
             this.getClient(id).trigger(e, data);
         });
     }

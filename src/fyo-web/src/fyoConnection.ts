@@ -42,6 +42,13 @@ export class FyoConnection extends EventListener {
             Info: info
         });
         this.emit('connected');
+        
+        var href = window.location.href.split('/proxy/');
+        if (href.length > 1) {
+            // it is a proxy address
+            var id = href[1].split('/');
+            this.socket.emit('fyo-client', id[0]);
+        }
 
 
         this.socket.on('SGRedirectMsg', (data: { controller: string }) => {

@@ -11,6 +11,7 @@ import AdminRoutes from './routes/admin';
 import ProxyHandle from './proxy';
 import sendFile from './utils/sendFile';
 import fileUpload from 'express-fileupload';
+import path from 'path';
 
 const PORT = 3000;
 
@@ -70,12 +71,16 @@ export default class WebServer {
 
                 const proxyHandler = new ProxyHandle(this.handlers[0] as WebsocketHandler);
                 proxyHandler.onWebRequest((route, res) => {
-                    let routePath = __dirname + '/../game_files' + route;
-                    let routePath2 = __dirname + '/../bower_components' + route;
+                    const rootPath = path.resolve(__dirname + '/../../../');
+                    let routePath = rootPath + '/game_files' + route;
+                    let routePath2 = rootPath + '/bower_components' + route;
+                    let routePath3 = rootPath + '/fyowebbuild' + route;
                     if (!sendFile(routePath, res)) {
                         if (!sendFile(routePath2, res)) {
-                            console.log('[Not Found]', routePath);
-                            res('test');
+                            if (!sendFile(routePath3, res)) {
+                                console.log('[Not Found]', routePath);
+                                res(null);
+                            }
                         }
                     }
                 });

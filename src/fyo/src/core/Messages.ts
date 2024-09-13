@@ -1,7 +1,7 @@
 export interface SGUpdateMsg {
     SGID: number;
     DeviceId: string;
-    MessageType: 'GameStarted' | 'Primary' | 'Redirect' | 'GameEnded';
+    MessageType: 'GameStarted' | 'Primary' | 'Redirect' | 'GameEnded' | 'SGStartMsg';
 }
 
 export interface AppHandshakeMsg {
