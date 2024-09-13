@@ -23,6 +23,7 @@ export default class GamePadClient extends EventListener {
 
     Init() {
         this.client.listen('SGUpdateMsg', this.SGUpdateMsg.bind(this));
+        this.client.on('SGUpdateMsg', this.SGUpdateMsg.bind(this));
         this.client.on('SGTimingOutMsg', () => { });
         this.client.on('SGDisconnectMsg', () => { });
         this.client.on('SGReconnectMsg', () => { });

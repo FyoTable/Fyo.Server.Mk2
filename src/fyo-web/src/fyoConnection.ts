@@ -36,12 +36,6 @@ export class FyoConnection extends EventListener {
 
     onConnect() {
         const info = this.helper.GetDeviceInfo();
-        this.socket.emit('SGHandshakeIdentMsg', {
-            DeviceId: this.getClientId(),
-            Controller: this.controller,
-            Info: info
-        });
-        this.emit('connected');
         
         var href = window.location.href.split('/proxy/');
         if (href.length > 1) {
@@ -50,14 +44,28 @@ export class FyoConnection extends EventListener {
             this.socket.emit('fyo-client', id[0]);
         }
 
+        this.socket.emit('SGHandshakeIdentMsg', {
+            DeviceId: this.getClientId(),
+            Controller: this.controller,
+            Info: info
+        });
+        this.emit('connected');
 
-        this.socket.on('SGRedirectMsg', (data: { controller: string }) => {
+
+        this.socket.on('SGRedirectMsg', (data: { Controller: string, controller?: string }) => {
             console.log('SGRedirectMsg', data);
             if (data.controller == this.controller) {
                 // we're already at this controller
                 return;
             }
-            window.location.href = '/' + data.controller;
+            var href = window.location.href.split('/proxy/');
+            if (href.length > 1) {
+                // it is a proxy address
+                var id = href[1].split('/');
+                window.location.href = '/proxy/' + id[0] + '/' + (data.Controller || data.controller)
+            } else {
+                window.location.href = '/' + (data.Controller || data.controller);
+            }
         });
 
         this.socket.on('SGUpdateMsg', (msg: any) => {
