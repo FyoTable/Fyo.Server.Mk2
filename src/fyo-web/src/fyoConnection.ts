@@ -71,9 +71,9 @@ export class FyoConnection extends EventListener {
             if (href.length > 1) {
                 // it is a proxy address
                 var id = href[1].split('/');
-                window.location.href = '/proxy/' + id[0] + '/' + (data.Controller || data.controller)
+                window.location.href = '/proxy/' + id[0] + '/' + (data.Controller || data.controller) + '?player_id=' + player_id;
             } else {
-                window.location.href = '/' + (data.Controller || data.controller);
+                window.location.href = '/' + (data.Controller || data.controller) + '?player_id=' + player_id;
             }
         });
 
