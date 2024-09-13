@@ -44,10 +44,19 @@ export class FyoConnection extends EventListener {
             this.socket.emit('fyo-client', id[0]);
         }
 
+        // get query parameters
+        var params = new URLSearchParams(window.location.search);
+        var player_id = params.get('player_id');
+
         this.socket.emit('SGHandshakeIdentMsg', {
             DeviceId: this.getClientId(),
+            PlayerId: player_id,
             Controller: this.controller,
-            Info: info
+            Info: info,
+            deviceId: this.getClientId(),
+            playerId: parseInt(player_id || '-1'),
+            controller: this.controller,
+            info: info,
         });
         this.emit('connected');
 

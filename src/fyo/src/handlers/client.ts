@@ -5,6 +5,7 @@ export default class Client extends EventListener {
     controller?: string;
     info?: any;
     messageId: number = 0;
+    playerId: number = -1;
 
     forcedDisconnect: boolean = false;
 
@@ -15,6 +16,8 @@ export default class Client extends EventListener {
     addMessageID(data: any) {
         this.messageId++;
         data.messageId = this.messageId;
+        data.deviceId = this.deviceId;
+        data.playerId = this.playerId;
     }
 
     send(event: string, data: any) {
